@@ -1,5 +1,5 @@
 import React from 'react'
-import logo from '../../assets/logo.png'
+import logo from '/assets/logo.png'
 import { HiOutlineHome, HiOutlineSquare3Stack3D, HiOutlinePower } from "react-icons/hi2";
 import { useLocation, Link } from 'react-router-dom';
 
