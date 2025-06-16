@@ -9,7 +9,7 @@ import SignInPage from './Pages/SignInPage.jsx'
 import DashboardPage from './Pages/DashboardPage.jsx'
 import CreateCoursePage from './Pages/CreateCoursePage.jsx'
 import { Provider } from 'react-redux'
-import { store } from './redux/store'
+import  store  from './redux/store'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 

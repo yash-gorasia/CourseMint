@@ -1,10 +1,10 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { setCourseTitle, setCourseDescription } from '../../redux/courseSlice'
+import { setCourseTitle, setCourseDescription } from '../../redux/feature/courseInputSlice'
 
 const TopicDescription = () => {
     const dispatch = useDispatch();
-    const { courseTitle, courseDescription } = useSelector(state => state.course);
+    const { courseTitle, courseDescription } = useSelector(state => state.courseInput);
     return (
         <div className="flex flex-col mx-4 sm:mx-16 md:mx-32 lg:mx-56 gap-2">
             {/* Input Topic */}
@@ -32,3 +32,6 @@ const TopicDescription = () => {
 }
 
 export default TopicDescription
+
+
+

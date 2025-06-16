@@ -1,7 +1,7 @@
 import React from 'react'
 import Select from 'react-select';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedOption } from '../../redux/courseSlice';
+import { setSelectedOption } from '../../redux/feature/courseInputSlice';
 
 const difficultyOptions = [
     { value: 'Beginner', label: 'Beginner' },
@@ -22,7 +22,7 @@ const videoOptions = [
 
 const SelectOption = () => {
     const dispatch = useDispatch();
-    const { selectedOptions } = useSelector(state => state.course);
+    const { selectedOptions } = useSelector(state => state.courseInput);
 
     // Extract specific options from the redux state or set defaults
     const optionDiff = selectedOptions.difficulty || null;

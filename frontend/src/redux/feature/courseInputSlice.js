@@ -13,8 +13,8 @@ const initialState = {
   activeStep: 1
 };
 
-export const courseSlice = createSlice({
-  name: 'course',
+export const courseInputSlice = createSlice({
+  name: 'courseInput',
   initialState,
   reducers: {
     setCourseCategory: (state, action) => {
@@ -50,6 +50,6 @@ export const {
   setActiveStep,
   nextStep,
   prevStep,
-} = courseSlice.actions;
+} = courseInputSlice.actions;
 
-export default courseSlice.reducer;
+export default courseInputSlice.reducer;

@@ -1,11 +1,11 @@
 import React from 'react'
 import CategoryList from '../../utils/CategoryList'
 import { useSelector, useDispatch } from 'react-redux'
-import { setCourseCategory } from '../../redux/courseSlice'
+import { setCourseCategory } from '../../redux/feature/courseInputSlice'
 
 const SelectCategory = () => {
   const dispatch = useDispatch();
-  const courseCategory = useSelector(state => state.course.courseCategory);
+  const courseCategory = useSelector(state => state.courseInput.courseCategory);
 
   return (
     <div className='grid grid-cols-3 gap-10 md:px-20 px-10'>
