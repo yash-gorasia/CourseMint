@@ -6,16 +6,17 @@ import TopicDescription from './TopicDescription';
 import SelectOption from './SelectOption';
 import { useSelector, useDispatch } from 'react-redux';
 import { nextStep as nextStepAction, prevStep as prevStepAction } from '../../redux/feature/courseInputSlice';
-import { generateCourseLayout_AI } from '../../configs/AiModel';
+import { generate_AI } from '../../configs/AiModel';
 import Loader from '../../utils/Loader';
 import { useUser } from '@clerk/clerk-react';
 import { useAddCourseMutation } from '../../redux/api/courseSlice';
-import { v4 as uuidv4 } from 'uuid';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Page = () => {
     const [loader, setLoader] = useState(false);
-    const [notification, setNotification] = useState({ show: false, type: '', message: '' });
     const { user } = useUser();
+    const navigate = useNavigate();
 
     // RTK Query hook for adding a course
     const [addCourse, { isLoading }] = useAddCourseMutation();
@@ -36,7 +37,7 @@ const Page = () => {
             name: "Options",
             icon: <HiClipboardDocumentCheck />
         },
-    ]    
+    ]
     const dispatch = useDispatch();
     const { courseCategory, courseTitle, selectedOptions, activeStep } = useSelector(state => state.courseInput);
 
@@ -46,9 +47,10 @@ const Page = () => {
 
     const handlePrev = () => {
         dispatch(prevStepAction());
-    }; const generateCourseLayout = async () => {
+    };
+
+    const generateCourseLayout = async () => {
         setLoader(true);
-        setNotification({ show: false, type: '', message: '' });
 
         const BASIC_PROMPT = 'Generate a course tutorial with the following details: Include course name, description, chapters with name, about section, and duration. Format it as JSON.\n';
         const USER_INPUT_PROMPT = `Category: ${courseCategory}, Topic: ${courseTitle}, Level: ${selectedOptions?.difficulty?.value || selectedOptions?.difficulty}, Duration: ${selectedOptions?.duration?.value || selectedOptions?.duration}, No. of Chapters: ${selectedOptions?.chapters?.value || selectedOptions?.chapters}`;
@@ -62,37 +64,30 @@ const Page = () => {
 
         try {
             // Generate course content using AI
-            const response = await generateCourseLayout_AI(FINAL_PROMPT);
+            const response = await generate_AI(FINAL_PROMPT);
             const cleaned = extractJson(response);
             const parsedResult = JSON.parse(cleaned);
             console.log(parsedResult);
 
-            // Save course to the backend using RTK Query mutation
             const courseData = {
-                courseId: uuidv4(),
                 name: courseTitle,
                 category: courseCategory,
                 level: selectedOptions?.difficulty?.value || selectedOptions?.difficulty,
+                includeVideo: selectedOptions?.includeVideo?.value || selectedOptions?.includeVideo,
                 courseOutput: parsedResult,
                 userName: user?.fullName || user?.username || null
             };
 
             const result = await addCourse(courseData).unwrap();
+            toast.success('Course generated and saved successfully!');
+            const courseId = result?.id;
+            navigate(`/course/${courseId}`);
             setLoader(false);
-            setNotification({
-                show: true,
-                type: 'success',
-                message: 'Course created successfully!'
-            });
             console.log('Course saved successfully:', result);
 
         } catch (err) {
             setLoader(false);
-            setNotification({
-                show: true,
-                type: 'error',
-                message: `Failed to ${err.status ? 'save' : 'generate'} course: ${err.data?.message || err.message || 'Unknown error'}`
-            });
+            toast.error('Failed to generate or save course. Please try again.');
             console.error("Failed to generate or save course:", err);
         }
     }; return (
@@ -143,23 +138,6 @@ const Page = () => {
                     </button>}
                 </div>
             </div>
-
-            {/* Notification message */}
-            {notification.show && (
-                <div className={`fixed top-5 right-5 p-4 rounded-md shadow-md ${notification.type === 'success' ? 'bg-green-100 text-green-700' :
-                        notification.type === 'error' ? 'bg-red-100 text-red-700' :
-                            'bg-blue-100 text-blue-700'
-                    }`}>
-                    {notification.message}
-                    <button
-                        className="ml-3 text-sm font-medium underline"
-                        onClick={() => setNotification({ ...notification, show: false })}
-                    >
-                        Dismiss
-                    </button>
-                </div>
-            )}
-
             {/* Loader */}
             {(loader || isLoading) && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-300 opacity-80">

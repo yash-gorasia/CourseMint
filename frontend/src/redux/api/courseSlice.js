@@ -11,7 +11,14 @@ export const courseApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Course"],
     }),
+
+    getCourse: builder.query({
+      query: (id) => ({
+        url: `${COURSE_URL}/get-course/${id}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useAddCourseMutation } = courseApiSlice;
+export const { useAddCourseMutation, useGetCourseQuery } = courseApiSlice;

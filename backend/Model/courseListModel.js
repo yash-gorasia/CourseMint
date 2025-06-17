@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
 
 const CourseListSchema = new mongoose.Schema({
-    courseId: {
-        type: String,
-        required: true
-    },
     name: {
         type: String,
         required: true
@@ -15,6 +11,11 @@ const CourseListSchema = new mongoose.Schema({
     },
     level: {
         type: String,
+        required: true
+    },
+    includeVideo: {
+        type: Boolean,
+        default: true,
         required: true
     },
     courseOutput: {

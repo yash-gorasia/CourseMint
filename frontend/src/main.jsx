@@ -8,6 +8,7 @@ import SignUpPage from './Pages/SignUpPage.jsx'
 import SignInPage from './Pages/SignInPage.jsx'
 import DashboardPage from './Pages/DashboardPage.jsx'
 import CreateCoursePage from './Pages/CreateCoursePage.jsx'
+import CoursePage from './Pages/CoursePage.jsx'
 import { Provider } from 'react-redux'
 import  store  from './redux/store'
 
@@ -29,6 +30,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="/sign-in" element={<SignInPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/create-course" element={<CreateCoursePage />} />
+            <Route path="/course/:courseId" element={<CoursePage />} />
           </Routes>
         </Router>
       </ClerkProvider>
