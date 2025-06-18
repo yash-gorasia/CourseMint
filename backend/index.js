@@ -3,6 +3,7 @@ import cors from 'cors';
 import connectDB from './Config/db.js';
 import dotenv from 'dotenv';
 import courseRoute from './Route/courseRoute.js';
+import chapterRoute from './Route/chapterRoute.js';
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(cors(
 app.use(express.json());
 
 app.use('/api/course', courseRoute);
+app.use('/api/chapter', chapterRoute);
 
 
 

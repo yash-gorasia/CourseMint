@@ -1,4 +1,8 @@
 import CourseList from "../Model/courseListModel.js";
+// Ensure that courseListModel.js exports a valid Mongoose model, e.g.:
+// import mongoose from "mongoose";
+// const courseListSchema = new mongoose.Schema({ ... });
+// export default mongoose.model("CourseList", courseListSchema);
 
 const createCourse = async (req, res) => {
     try {
@@ -14,7 +18,6 @@ const createCourse = async (req, res) => {
 
         // Create a new course instance
         const newCourse = new CourseList({
-
             name,
             category,
             level,

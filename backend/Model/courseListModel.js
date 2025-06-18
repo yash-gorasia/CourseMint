@@ -24,11 +24,13 @@ const CourseListSchema = new mongoose.Schema({
     },
     userName: {
         type: String,
-        default: null 
+        default: null
     }
 }, {
-    timestamps: true 
+    timestamps: true
 });
+
+
 
 const CourseList = mongoose.model('courselists', CourseListSchema);
 
