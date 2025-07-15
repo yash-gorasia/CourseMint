@@ -1,12 +1,10 @@
 import CourseList from "../Model/courseListModel.js";
-// Ensure that courseListModel.js exports a valid Mongoose model, e.g.:
-// import mongoose from "mongoose";
-// const courseListSchema = new mongoose.Schema({ ... });
-// export default mongoose.model("CourseList", courseListSchema);
+import Chapters from "../Model/chapterModel.js"; 
+
 
 const createCourse = async (req, res) => {
     try {
-        const { name, category, level, courseOutput, userName } = req.body;
+        const { name, category, level, courseOutput, userEmail  } = req.body;
 
         // Validate required fields
         if (!name || !category || !level || !courseOutput) {
@@ -22,7 +20,7 @@ const createCourse = async (req, res) => {
             category,
             level,
             courseOutput,
-            userName: userName || null // Default to null if not provided
+            userEmail
         });
 
         // Save the course to the database
@@ -42,12 +40,11 @@ const createCourse = async (req, res) => {
         });
     }
 }
-
 const getCourse = async (req, res) => {
     try {
         const courseId = req.params.id;
 
-        // Find the course by ID
+        // Find the course by ID and populate chapter data
         const course = await CourseList.findById(courseId);
 
         if (!course) {
@@ -55,6 +52,14 @@ const getCourse = async (req, res) => {
                 success: false,
                 message: 'Course not found'
             });
+        }
+        
+        // Fetch chapters if course has chapterIds
+        if (course.chapterIds && course.chapterIds.length > 0) {
+            const chapters = await Chapters.find({ _id: { $in: course.chapterIds } });
+            
+            // Add chapters to the course response
+            course._doc.chapters = chapters;
         }
 
         res.status(200).json({
@@ -71,4 +76,79 @@ const getCourse = async (req, res) => {
     }
 }
 
-export { createCourse, getCourse };
+const getCourseByUserEmail = async (req, res) => {
+    const { userEmail } = req.body;
+
+    if (!userEmail) {
+        return res.status(400).json({
+            success: false,
+            message: 'User email is required'
+        });
+    }
+
+    try {
+        const courses = await CourseList.find({ userEmail });
+
+        if (courses.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No courses found for this user'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            courses
+        });
+    }
+    catch (error) {
+        console.error('Error fetching courses by user email:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch courses',
+            error: error.message
+        });
+    }
+}
+
+const deleteCourse = async (req, res) => {
+    const { courseId } = req.body;
+
+    if (!courseId) {
+        return res.status(400).json({
+            success: false,
+            message: 'Course ID required.'
+        });
+    }
+
+    try {
+        const course = await CourseList.findById(courseId);
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: 'Course not found'
+            });
+        }
+
+        // Delete all chapters related to this course
+        await Chapters.deleteMany({ courseId });
+
+        // Delete the course itself
+        await CourseList.findByIdAndDelete(courseId);
+
+        res.status(200).json({
+            success: true,
+            message: 'Course and related chapters deleted successfully'
+        });
+    } catch (error) {
+        console.error('Error deleting course:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to delete course',
+            error: error.message
+        });
+    }
+}
+
+export { createCourse, getCourse, getCourseByUserEmail, deleteCourse };

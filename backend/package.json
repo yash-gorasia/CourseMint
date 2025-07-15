@@ -14,14 +14,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon ./index.js",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "start": "nodemon ./index.js"
   },
   "author": "",
   "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "drizzle-kit": "^0.31.1"
-  }
+  "description": ""
 }

@@ -1,8 +1,9 @@
 import React from 'react'
 import { HiOutlineClock, HiOutlineCheckCircle } from "react-icons/hi2";
 
-const ChapterList = ({ course }) => {
+const ChapterList = ({ course }) => {    
     const chapters = course?.courseOutput?.chapters || [];
+    
 
     return (
         <div className='mt-3'>
@@ -11,10 +12,10 @@ const ChapterList = ({ course }) => {
                 {chapters.map((chapter, index) => (
                     <div key={index} className='border rounded-lg shadow-sm p-4 mb-2 flex justify-between items-center hover:bg-gray-50 transition-colors'>
                         <div className='flex items-center gap-5 mb-2'>
-                            <h2 className='bg-green-500 flex-none h-10 w-10 text-white rounded-full text-center p-2'>{chapter?.chapterNumber}</h2>
+                            <h2 className='bg-green-500 flex-none h-10 w-10 text-white rounded-full text-center p-2'>{index+1}</h2>
                             <div>
-                                <h2 className='font-medium text-lg'>{chapter?.chapterName}</h2>
-                                <p className='text-sm text-gray-500'>{chapter?.description}</p>
+                                <h2 className='font-medium text-lg'>{chapter?.chapterName || chapter?.chapter_name}</h2>
+                                <p className='text-sm text-gray-500'>{chapter?.description || chapter?.about}</p>
                                 <p className='flex gap-2 text-green-700 items-center'> <HiOutlineClock /> {chapter?.duration}</p>
                             </div>
                         </div>

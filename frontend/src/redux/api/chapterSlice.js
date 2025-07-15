@@ -11,7 +11,28 @@ export const chapterApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Chapter"],
         }),
+        
+        getChapter: builder.query({
+            query: (chapterId) => ({
+                url: `${CHAPTER_URL}/get-chapter/${chapterId}`,
+                method: "GET"
+            }),
+            providesTags: ["Chapter"],
+        }),
+
+        getChaptersByCourseId: builder.query({
+            query: (courseId) => ({
+                url: `${CHAPTER_URL}/get-chapters/${courseId}`,
+                method: "GET"
+            }),
+            providesTags: ["Chapter"],
+        })
+    
     }),
 });
 
-export const { useAddChapterMutation } = chapterApiSlice;
+export const { 
+    useAddChapterMutation, 
+    useGetChapterQuery, 
+    useGetChaptersByCourseIdQuery
+} = chapterApiSlice;

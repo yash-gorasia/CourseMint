@@ -22,15 +22,14 @@ const CourseListSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.Mixed, // Equivalent to JSON column
         required: true
     },
-    userName: {
+    userEmail: {
         type: String,
-        default: null
+        default: null,
+        required: true
     }
 }, {
     timestamps: true
 });
-
-
 
 const CourseList = mongoose.model('courselists', CourseListSchema);
 

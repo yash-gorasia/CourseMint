@@ -18,7 +18,23 @@ export const courseApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getCourseByUserEmail: builder.query({
+      query: (userEmail) => ({
+        url: `${COURSE_URL}/get-course-email`,
+        method: "POST",
+        body: { userEmail },
+      }),
+      invalidatesTags: ["Course"],
+    }),
+    deleteCourse: builder.mutation({
+      query: (courseId) => ({
+        url: `${COURSE_URL}/delete-course`,
+        method: "DELETE",
+        body: { courseId },
+      }),
+      invalidatesTags: ["Course"],
+    })
   }),
 });
 
-export const { useAddCourseMutation, useGetCourseQuery } = courseApiSlice;
+export const { useAddCourseMutation, useGetCourseQuery, useGetCourseByUserEmailQuery, useDeleteCourseMutation } = courseApiSlice;

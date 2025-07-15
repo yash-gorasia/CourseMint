@@ -1,14 +1,28 @@
 import React from 'react';
 import { HiTag, HiCollection, HiClock, HiOutlineVideoCamera, HiOutlineDocumentText } from 'react-icons/hi';
+import { Link, useNavigate} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const BasicInfo = ({ course }) => {
-    const courseName = course?.courseOutput?.courseName || 'N/A';
+    const {courseId} = useParams();
+    const navigate = useNavigate();
+    
+
+    const courseName = course?.courseOutput?.courseName || course?.courseOutput?.course_name || 'N/A';
     const description = course?.courseOutput?.description || 'No description available';
     const category = course?.category || 'N/A';
     const level = course?.level || 'N/A';
     const duration = course?.courseOutput?.duration || 'N/A';
-    const noOfChapters = course?.courseOutput?.numberOfChapters || 'N/A';
+    const noOfChapters = course?.courseOutput?.numberOfChapters || course?.courseOutput?.number_of_chapters || 'N/A';
     const videoIncluded = course?.courseOutput?.videoIncluded ? 'Yes' : 'No';
+
+    const handleStartClick = (courseId) => {
+        if (courseId) {
+            navigate(`/course/${courseId}/start`);
+        } else {
+            console.error('Course ID is not available');
+        }
+    }
 
     return (
         <div className="p-4 sm:p-6 md:p-10 border rounded-xl shadow-sm mt-5 bg-white max-w-full md:max-w-3xl mx-auto">
@@ -45,13 +59,14 @@ const BasicInfo = ({ course }) => {
                             <span className="ml-1">{videoIncluded}</span>
                         </div>
                     </div>
-                    <div className="mt-6 flex justify-center md:justify-end">
-                        <button
-                            className="w-full md:w-auto px-8 md:px-36 inline-block rounded border border-green-600 bg-green-500 py-3 font-mono font-semibold text-white shadow-sm transition-colors hover:bg-green-700 cursor-pointer"
-                        >
-                            Start
-                        </button>
-                    </div>
+                        <div className="mt-6 flex justify-center md:justify-end">
+                            <button
+                                className="w-full md:w-auto px-8 md:px-36 inline-block rounded border border-green-600 bg-green-500 py-3 font-mono font-semibold text-white shadow-sm transition-colors hover:bg-green-700 cursor-pointer"
+                                onClick={() => handleStartClick(courseId)}
+                            >
+                                Start
+                            </button>
+                        </div>
                 </div>
             </div>
         </div>

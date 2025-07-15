@@ -37,4 +37,68 @@ const createChapter = async (req, res) => {
     }
 }
 
-export { createChapter };
+const getChapterContent = async (req, res) => {
+    try {
+        const chapterId = req.params.chapterId;
+
+        if (!chapterId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Chapter ID is required'
+            });
+        }
+
+        // Find the chapter by ID
+        const chapter = await Chapters.findById(chapterId);
+
+        if (!chapter) {
+            return res.status(404).json({
+                success: false,
+                message: 'Chapter not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            chapter
+        });
+    } catch (error) {
+        console.error('Error fetching chapter content:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch chapter content',
+            error: error.message
+        });
+    }
+}
+
+// New function to get chapters by course ID
+const getChaptersByCourseId = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+
+        if (!courseId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Course ID is required'
+            });
+        }
+
+        // Find all chapters for this course
+        const chapters = await Chapters.find({ courseId });
+
+        res.status(200).json({
+            success: true,
+            chapters
+        });
+    } catch (error) {
+        console.error('Error fetching chapters by course ID:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch chapters',
+            error: error.message
+        });
+    }
+}
+
+export { createChapter, getChapterContent, getChaptersByCourseId };
