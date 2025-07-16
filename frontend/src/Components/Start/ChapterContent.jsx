@@ -28,7 +28,7 @@ const ChapterContent = ({ chapter, basicInfo }) => {
                 {chapterName}
               </h1>
               {duration && (
-                <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-green-400 to-green-500 text-white rounded-full text-sm font-medium shadow-sm">
+                <span className="flex-none items-center px-4 py-2 bg-gradient-to-r from-green-400 to-green-500 text-white rounded-full text-md font-medium shadow-sm">
                   ⏱️ {duration}
                 </span>
               )}
@@ -119,6 +119,60 @@ const ChapterContent = ({ chapter, basicInfo }) => {
                           </div>
                         </div>
                       )}
+
+                      {/* Sub Features */}
+                      {topic.subFeatures && Array.isArray(topic.subFeatures) && topic.subFeatures.length > 0 && (
+                        <div className="mt-8">
+                          <div className="flex items-center gap-2 mb-6">
+                            <span className="text-green-600 text-lg">🔍</span>
+                            <h4 className="text-xl font-semibold text-green-900">Deep Dive Topics</h4>
+                          </div>
+                          <div className="space-y-6">
+                            {topic.subFeatures.map((subFeature, subIndex) => (
+                              <div key={subIndex} className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-200 p-6 hover:shadow-md transition-all duration-200">
+                                <div className="flex items-start gap-4">
+                                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 text-white rounded-lg flex items-center justify-center font-bold text-sm shadow-sm">
+                                    {String.fromCharCode(97 + subIndex)}
+                                  </div>
+                                  <div className="flex-1">
+                                    <h5 className="text-lg font-semibold  mb-3">
+                                      {subFeature.title}
+                                    </h5>
+                                    <p className=" leading-7 mb-4">
+                                      {subFeature.description}
+                                    </p>
+                                    
+                                    {/* Sub Feature Code Example */}
+                                    {(subFeature.codeExample || subFeature.code_example) && (
+                                      <div className="mt-4">
+                                        <div className="flex items-center gap-2 mb-2">
+                                          <span className=" text-sm">💾</span>
+                                          <span className="font-medium text-sm">Example Code</span>
+                                        </div>
+                                        <div className="bg-gray-900 rounded-lg border border-gray-600 overflow-hidden">
+                                          <div className="flex items-center gap-2 px-3 py-2 bg-gray-800 border-b border-gray-600">
+                                            <div className="flex gap-1">
+                                              <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                                              <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                                              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                                            </div>
+                                            <span className="text-gray-400 text-xs ml-2 font-mono">snippet.js</span>
+                                          </div>
+                                          <div className="p-4 overflow-x-auto">
+                                            <pre className="text-green-300 font-mono text-xs leading-5 whitespace-pre-wrap">
+                                              {subFeature.codeExample || subFeature.code_example}
+                                            </pre>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -198,6 +252,60 @@ const ChapterContent = ({ chapter, basicInfo }) => {
                               </li>
                             ))}
                           </ul>
+                        </div>
+                      )}
+
+                      {/* Sub Features for legacy structure */}
+                      {topic.subFeatures && Array.isArray(topic.subFeatures) && topic.subFeatures.length > 0 && (
+                        <div className="mt-8">
+                          <div className="flex items-center gap-2 mb-6">
+                            <span className="text-purple-600 text-lg">🔍</span>
+                            <h4 className="text-xl font-semibold text-purple-900">Deep Dive Topics</h4>
+                          </div>
+                          <div className="space-y-6">
+                            {topic.subFeatures.map((subFeature, subIndex) => (
+                              <div key={subIndex} className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-200 p-6 hover:shadow-md transition-all duration-200">
+                                <div className="flex items-start gap-4">
+                                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-purple-400 to-purple-600 text-white rounded-lg flex items-center justify-center font-bold text-sm shadow-sm">
+                                    {String.fromCharCode(97 + subIndex)}
+                                  </div>
+                                  <div className="flex-1">
+                                    <h5 className="text-lg font-semibold text-purple-900 mb-3">
+                                      {subFeature.title}
+                                    </h5>
+                                    <p className="text-purple-800 leading-7 mb-4">
+                                      {subFeature.description}
+                                    </p>
+                                    
+                                    {/* Sub Feature Code Example */}
+                                    {(subFeature.codeExample || subFeature.code_example) && (
+                                      <div className="mt-4">
+                                        <div className="flex items-center gap-2 mb-2">
+                                          <span className="text-purple-600 text-sm">💾</span>
+                                          <span className="text-purple-800 font-medium text-sm">Example Code</span>
+                                        </div>
+                                        <div className="bg-gray-900 rounded-lg border border-gray-600 overflow-hidden">
+                                          <div className="flex items-center gap-2 px-3 py-2 bg-gray-800 border-b border-gray-600">
+                                            <div className="flex gap-1">
+                                              <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                                              <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                                              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                                            </div>
+                                            <span className="text-gray-400 text-xs ml-2 font-mono">snippet.js</span>
+                                          </div>
+                                          <div className="p-4 overflow-x-auto">
+                                            <pre className="text-green-300 font-mono text-xs leading-5 whitespace-pre-wrap">
+                                              {subFeature.codeExample || subFeature.code_example}
+                                            </pre>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
