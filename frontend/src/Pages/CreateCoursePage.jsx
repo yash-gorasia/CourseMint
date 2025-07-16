@@ -7,6 +7,8 @@ import SelectOption from '../Components/CreateCourse/SelectOption';
 import { useSelector, useDispatch } from 'react-redux';
 import { nextStep as nextStepAction, prevStep as prevStepAction } from '../redux/feature/courseInputSlice.js';
 import { generate_AI } from '../configs/AiModel.jsx';
+import { GENERATE_COURSE_PROMPT } from '../configs/PromptTemplates.jsx';
+import { DataValidator } from '../utils/DataValidator.js';
 import Loader from '../utils/Loader';
 import { useUser } from '@clerk/clerk-react';
 import { useAddCourseMutation } from '../redux/api/courseSlice';
@@ -53,34 +55,76 @@ const CreateCoursePage = () => {
   const generateCourseLayout = async () => {
     setLoader(true);
 
-    const BASIC_PROMPT = 'Generate a course tutorial with the following details: Include course name, description, chapters with name, about section, and duration. Format it as JSON.\n';
-    const USER_INPUT_PROMPT = `Category: ${courseCategory}, Topic: ${courseTitle}, Level: ${selectedOptions?.difficulty?.value || selectedOptions?.difficulty}, Duration: ${selectedOptions?.duration?.value || selectedOptions?.duration}, No. of Chapters: ${selectedOptions?.chapters?.value || selectedOptions?.chapters}`;
-    const FINAL_PROMPT = BASIC_PROMPT + USER_INPUT_PROMPT;
-
-    const extractJson = (text) => {
-      const match = text.match(/```json\s*([\s\S]*?)```/);
-      if (match) return match[1];
-      return text.trim(); // fallback if no ```json ... ``` block found
-    };
-
     try {
-      // Generate course content using AI
-      const response = await generate_AI(FINAL_PROMPT);
-      const cleaned = extractJson(response);
-      const parsedResult = JSON.parse(cleaned);
-      console.log(parsedResult);
+      // Get course generation parameters
+      const category = courseCategory;
+      const topic = courseTitle;
+      const level = (selectedOptions?.difficulty?.value || selectedOptions?.difficulty || 'beginner').toLowerCase();
+      const includeVideo = (selectedOptions?.includeVideo?.value || selectedOptions?.includeVideo) === 'Yes';
+      
+      // Extract dynamic options
+      const courseDuration = selectedOptions?.duration?.value || selectedOptions?.duration || '2 Hours';
+      const numberOfChapters = parseInt(selectedOptions?.chapters || 6);
+
+      // Validate inputs
+      if (!category || !topic) {
+        toast.error('Please select a category and enter a topic');
+        setLoader(false);
+        return;
+      }
+
+      if (numberOfChapters < 1 || numberOfChapters > 15) {
+        toast.error('Number of chapters must be between 1 and 15');
+        setLoader(false);
+        return;
+      }
+
+      // Create options object for dynamic prompt
+      const dynamicOptions = {
+        courseDuration,
+        numberOfChapters
+      };
+
+      // Generate strict prompt with dynamic options
+      const prompt = GENERATE_COURSE_PROMPT(category, topic, level, includeVideo, dynamicOptions);
+      console.log('Generated prompt with options:', { category, topic, level, includeVideo, dynamicOptions });
+
+      // Generate course content using AI with validation
+      const aiResponse = await generate_AI(prompt, 'course');
+      console.log('AI Response:', aiResponse);
+
+      // Validate the AI response
+      const validation = DataValidator.validateCourseOutput(aiResponse);
+      
+      if (!validation.isValid) {
+        console.error('Validation errors:', validation.errors);
+        toast.error(`AI generated invalid data: ${validation.errors.join(', ')}`);
+        setLoader(false);
+        return;
+      }
+
+      // Verify chapter count matches user request
+      if (validation.normalized.chapters.length !== numberOfChapters) {
+        console.warn(`Expected ${numberOfChapters} chapters, got ${validation.normalized.chapters.length}`);
+        toast.warning(`Generated ${validation.normalized.chapters.length} chapters instead of requested ${numberOfChapters}`);
+      }
+
+      // Use validated and normalized data
+      const normalizedCourseOutput = validation.normalized;
 
       const courseData = {
         name: courseTitle,
         category: courseCategory,
-        level: selectedOptions?.difficulty?.value || selectedOptions?.difficulty,
-        includeVideo: selectedOptions?.includeVideo?.value || selectedOptions?.includeVideo,
-        courseOutput: parsedResult,
+        level: level,
+        includeVideo: includeVideo,
+        courseOutput: normalizedCourseOutput,
         userEmail: user?.emailAddresses[0]?.emailAddress || null
       };
 
+      console.log('Course data to save:', courseData);
+
       const result = await addCourse(courseData).unwrap();
-      toast.success('Course generated and saved successfully!');
+      toast.success(`Course generated successfully with ${normalizedCourseOutput.chapters.length} chapters!`);
       const courseId = result?.id;
       navigate(`/course/${courseId}`);
       setLoader(false);

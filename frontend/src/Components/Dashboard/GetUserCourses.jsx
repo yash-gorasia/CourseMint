@@ -58,7 +58,7 @@ const GetUserCourses = () => {
         // Handle different naming conventions from AI response
         const courseName = course?.courseOutput?.courseName || course?.courseOutput?.course_name || course?.name;
         const category = course?.category;
-        const noOfChapters = course?.courseOutput?.numberOfChapters || course?.courseOutput?.number_of_chapters || 0;
+        const noOfChapters = course?.courseOutput?.chapters.length || 0;
         const difficulty = course?.courseOutput?.level || course?.level;
         const isDeleting = deletingCourseId === course._id;
 

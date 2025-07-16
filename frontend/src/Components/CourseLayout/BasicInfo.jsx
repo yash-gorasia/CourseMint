@@ -1,20 +1,19 @@
 import React from 'react';
 import { HiTag, HiCollection, HiClock, HiOutlineVideoCamera, HiOutlineDocumentText } from 'react-icons/hi';
-import { Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 const BasicInfo = ({ course }) => {
-    const {courseId} = useParams();
+    const { courseId } = useParams();
     const navigate = useNavigate();
-    
+
 
     const courseName = course?.courseOutput?.courseName || course?.courseOutput?.course_name || 'N/A';
-    const description = course?.courseOutput?.description || 'No description available';
+    const description = course?.courseOutput?.courseDescription || course?.courseOutput?.course_description || course?.courseOutput?.description || 'No description available';
     const category = course?.category || 'N/A';
     const level = course?.level || 'N/A';
-    const duration = course?.courseOutput?.duration || 'N/A';
-    const noOfChapters = course?.courseOutput?.numberOfChapters || course?.courseOutput?.number_of_chapters || 'N/A';
-    const videoIncluded = course?.courseOutput?.videoIncluded ? 'Yes' : 'No';
+    const noOfChapters = course?.courseOutput?.chapters?.length || course?.courseOutput?.numberOfChapters || course?.courseOutput?.number_of_chapters || 'N/A';
+    const videoIncluded = course?.includeVideo ? 'Yes' : 'No';
 
     const handleStartClick = (courseId) => {
         if (courseId) {
@@ -44,11 +43,6 @@ const BasicInfo = ({ course }) => {
                             <span className="ml-1">{level}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <HiClock className="text-gray-500" />
-                            <span className="font-semibold">Duration:</span>
-                            <span className="ml-1">{duration}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
                             <HiOutlineDocumentText className="text-gray-500" />
                             <span className="font-semibold">No Of Chapters:</span>
                             <span className="ml-1">{noOfChapters}</span>
@@ -59,14 +53,14 @@ const BasicInfo = ({ course }) => {
                             <span className="ml-1">{videoIncluded}</span>
                         </div>
                     </div>
-                        <div className="mt-6 flex justify-center md:justify-end">
-                            <button
-                                className="w-full md:w-auto px-8 md:px-36 inline-block rounded border border-green-600 bg-green-500 py-3 font-mono font-semibold text-white shadow-sm transition-colors hover:bg-green-700 cursor-pointer"
-                                onClick={() => handleStartClick(courseId)}
-                            >
-                                Start
-                            </button>
-                        </div>
+                    <div className="mt-6 flex justify-center md:justify-end">
+                        <button
+                            className="w-full md:w-auto px-8 md:px-36 inline-block rounded border border-green-600 bg-green-500 py-3 font-mono font-semibold text-white shadow-sm transition-colors hover:bg-green-700 cursor-pointer"
+                            onClick={() => handleStartClick(courseId)}
+                        >
+                            Start
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

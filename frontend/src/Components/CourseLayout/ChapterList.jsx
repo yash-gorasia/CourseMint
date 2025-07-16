@@ -15,7 +15,9 @@ const ChapterList = ({ course }) => {
                             <h2 className='bg-green-500 flex-none h-10 w-10 text-white rounded-full text-center p-2'>{index+1}</h2>
                             <div>
                                 <h2 className='font-medium text-lg'>{chapter?.chapterName || chapter?.chapter_name}</h2>
-                                <p className='text-sm text-gray-500'>{chapter?.description || chapter?.about}</p>
+                                <p className='text-sm text-gray-500 mb-2'>
+                                    {chapter?.chapterDescription || chapter?.chapter_description || chapter?.description || chapter?.about || 'No description available'}
+                                </p>
                                 <p className='flex gap-2 text-green-700 items-center'> <HiOutlineClock /> {chapter?.duration}</p>
                             </div>
                         </div>

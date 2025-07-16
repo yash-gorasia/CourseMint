@@ -10,9 +10,13 @@ const difficultyOptions = [
 ];
 
 const hoursOptions = [
-    { value: '1 Hour', label: '1 Hour' },
-    { value: '2 Hours', label: '2 Hours' },
-    { value: 'More than 3 Hours', label: 'More than 3 Hours' },
+    { value: '30 mins', label: '30 Minutes' },
+    { value: '1 hour', label: '1 Hour' },
+    { value: '2 hours', label: '2 Hours' },
+    { value: '3 hours', label: '3 Hours' },
+    { value: '4 hours', label: '4 Hours' },
+    { value: '5 hours', label: '5 Hours' },
+    { value: '6 hours', label: '6+ Hours' },
 ]
 
 const videoOptions = [

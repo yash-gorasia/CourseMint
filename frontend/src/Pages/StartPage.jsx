@@ -3,7 +3,8 @@ import { useGetCourseQuery } from '../redux/api/courseSlice.js'
 import { useGetChaptersByCourseIdQuery, useGetChapterQuery } from '../redux/api/chapterSlice.js'
 import { useParams } from 'react-router-dom'
 import ChapterListCard from '../Components/Start/ChapterListCard'
-import ChapterContent from '../Components/Start/ChapterContent.jsx'
+import ChapterContent from '../Components/Start/ChapterContent'
+import { safeDataAccess } from '../utils/DataValidator.js'
 
 const Page = () => {
   const { courseId } = useParams();
@@ -44,22 +45,45 @@ const Page = () => {
     }
   }, [chaptersData, course, selectedChapterId]);
 
-  const courseName = course?.courseOutput?.courseName || course?.courseOutput?.course_name;
-  const courseChapters = course?.courseOutput?.chapters || [];
-  const dbChapters = chaptersData?.chapters || [];
+  const courseName = safeDataAccess(course, 'courseOutput.courseName') || 
+                    safeDataAccess(course, 'courseOutput.course_name') || 
+                    'Course';
+  const courseChapters = safeDataAccess(course, 'courseOutput.chapters') || [];
+  const dbChapters = safeDataAccess(chaptersData, 'chapters') || [];
 
-  // Combine course chapter info with database chapters
+  // Combine course chapter info with database chapters with enhanced matching
   const combinedChapters = courseChapters.map((courseChapter, index) => {
-    // Get chapter name from either field
-    const chapterName = courseChapter.chapterName || courseChapter.chapter_name;
+    // Get chapter name from either field with normalization
+    const chapterName = (courseChapter.chapterName || courseChapter.chapter_name || '').trim();
     
-    // Try to match by index first, then by title
-    const dbChapter = dbChapters[index] || dbChapters.find(ch => 
-      ch.content?.title?.toLowerCase().includes(chapterName?.toLowerCase()) ||
-      chapterName?.toLowerCase().includes(ch.content?.title?.toLowerCase())
-    );
+    // Enhanced matching algorithm
+    let dbChapter = null;
+    
+    // 1. Try exact index match first (most reliable)
+    if (dbChapters[index]) {
+      dbChapter = dbChapters[index];
+    }
+    
+    // 2. Try exact name match
+    if (!dbChapter && chapterName) {
+      dbChapter = dbChapters.find(ch => {
+        const dbTitle = (ch.content?.title || '').trim().toLowerCase();
+        return dbTitle === chapterName.toLowerCase();
+      });
+    }
+    
+    // 3. Try partial name match
+    if (!dbChapter && chapterName) {
+      dbChapter = dbChapters.find(ch => {
+        const dbTitle = (ch.content?.title || '').trim().toLowerCase();
+        return dbTitle.includes(chapterName.toLowerCase()) || 
+               chapterName.toLowerCase().includes(dbTitle);
+      });
+    }
+    
     return {
       ...courseChapter,
+      chapterName: chapterName, // Normalized name
       _id: dbChapter?._id,
       hasContent: !!dbChapter,
       dbChapter: dbChapter // Store the full db chapter for easier access
@@ -115,29 +139,23 @@ const Page = () => {
         <h2 className='font-medium text-lg bg-green-500 p-4 text-white'>{courseName}</h2>
 
         <div className="overflow-y-auto h-full pb-20">
-          {combinedChapters.map((chapter, index) => {
-            // Determine if this chapter is selected
-            const isSelected =
-              (selectedChapterBasicInfo?.chapterName && selectedChapterBasicInfo?.chapterName === chapter.chapterName) ||
-              (selectedChapterBasicInfo?.chapter_name && selectedChapterBasicInfo?.chapter_name === chapter.chapter_name);
-
-            return (
-              <div
-                key={index}
-                className={`hover:cursor-pointer hover:bg-green-50 ${
-                  isSelected ? 'bg-green-100' : 'bg-white'
-                } ${!chapter.hasContent ? 'opacity-50' : ''}`}
-                onClick={() => handleChapterSelect(chapter, index)}
-              >
-                <ChapterListCard chapter={chapter} index={index} />
-                {!chapter.hasContent && (
-                  <div className="px-4 pb-2">
-                    <span className="text-xs text-red-500">Content not available</span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {combinedChapters.map((chapter, index) => (
+            <div
+              key={index}
+              className={`hover:cursor-pointer hover:bg-green-50 transition-colors ${
+                (selectedChapterBasicInfo?.chapterName === chapter.chapterName || 
+                 selectedChapterBasicInfo?.chapter_name === chapter.chapter_name) ? 'border-green-500' : 'bg-white'
+              } ${!chapter.hasContent ? 'opacity-50' : ''}`}
+              onClick={() => handleChapterSelect(chapter, index)}
+            >
+              <ChapterListCard chapter={chapter} index={index} />
+              {!chapter.hasContent && (
+                <div className="px-4 pb-2">
+                  <span className="text-xs text-red-500">Content not available</span>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
       <div className="flex-1 overflow-y-auto">

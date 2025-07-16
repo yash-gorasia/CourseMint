@@ -2,7 +2,7 @@ import React from 'react'
 
 const ChapterContent = ({ chapter, basicInfo }) => {
   console.log('ChapterContent received:', { chapter, basicInfo });
-  
+
   // If we don't have detailed chapter content, show basic info
   if (!chapter && !basicInfo) {
     return (
@@ -14,38 +14,34 @@ const ChapterContent = ({ chapter, basicInfo }) => {
 
   const content = chapter?.content;
   const chapterName = basicInfo?.chapterName || content?.title || "Chapter";
-  const chapterDescription = content?.description || basicInfo?.description || "";
+  const chapterDescription = content?.description || basicInfo?.description || "";  
   const duration = basicInfo?.duration || "";
-  
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto p-8">
         {/* Chapter Header */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
           <div className="flex items-start justify-between mb-6">
-            <div className="flex-1">
-              <h1 className="text-4xl font-bold text-gray-900 leading-tight mb-4">
+            <div className="flex flex-row justify-between items-center gap-4 flex-1">
+              <h1 className="text-4xl font-bold text-gray-900 leading-tight mb-0">
                 {chapterName}
               </h1>
               {duration && (
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-green-400 to-green-500 text-white rounded-full text-sm font-medium shadow-sm">
-                    ⏱️ {duration}
-                  </span>
-                </div>
+                <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-green-400 to-green-500 text-white rounded-full text-sm font-medium shadow-sm">
+                  ⏱️ {duration}
+                </span>
               )}
             </div>
           </div>
           {chapterDescription && (
-            <div className="prose prose-lg max-w-none">
+            <div className="prose prose-lg max-w-none mt-2">
               <p className="text-gray-700 text-lg leading-8 font-light">
                 {chapterDescription}
               </p>
             </div>
           )}
         </div>
-
-        {/* Video Section */}
         {chapter?.videoId && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
             <div className="flex items-center gap-3 mb-6">
@@ -77,7 +73,7 @@ const ChapterContent = ({ chapter, basicInfo }) => {
               </div>
               <h2 className="text-2xl font-bold text-gray-900">Learning Topics</h2>
             </div>
-            
+
             {content.map((topic, index) => (
               <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200">
                 <div className="p-8">
@@ -94,9 +90,9 @@ const ChapterContent = ({ chapter, basicInfo }) => {
                           {topic.description}
                         </p>
                       </div>
-                      
+
                       {/* Code Example with IDE-style design */}
-                      {topic.code_example && topic.code_example.code && (
+                      {(topic.codeExample || topic.code_example) && (
                         <div className="mt-6">
                           <div className="flex items-center gap-2 mb-3">
                             <div className="flex items-center justify-center w-8 h-8 bg-gray-800 rounded-lg">
@@ -112,28 +108,15 @@ const ChapterContent = ({ chapter, basicInfo }) => {
                                 <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                               </div>
-                              <span className="text-gray-400 text-sm ml-2 font-mono">terminal</span>
+                              <span className="text-gray-400 text-sm ml-2 font-mono">example.js</span>
                             </div>
                             {/* Code content */}
                             <div className="p-6 overflow-x-auto">
-                              <div 
-                                className="text-green-400 font-mono text-sm leading-6 whitespace-pre-wrap"
-                                dangerouslySetInnerHTML={{ 
-                                  __html: topic.code_example.code.replace(/<pre>/g, '').replace(/<\/pre>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>') 
-                                }}
-                              />
+                              <pre className="text-green-400 font-mono text-sm leading-6 whitespace-pre-wrap">
+                                {topic.codeExample || topic.code_example}
+                              </pre>
                             </div>
                           </div>
-                          
-                          {/* Code explanation */}
-                          {topic.code_example.explanation && (
-                            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                              <div className="flex items-start gap-2">
-                                <span className="text-blue-600 text-sm mt-0.5">💡</span>
-                                <p className="text-blue-800 text-sm leading-6">{topic.code_example.explanation}</p>
-                              </div>
-                            </div>
-                          )}
                         </div>
                       )}
                     </div>
@@ -153,12 +136,12 @@ const ChapterContent = ({ chapter, basicInfo }) => {
               </div>
               <h2 className="text-2xl font-bold text-gray-900">Learning Topics</h2>
             </div>
-            
+
             {content.topics.map((topic, index) => (
               <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200">
                 <div className="p-8">
                   <div className="flex items-start gap-6">
-                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-sm">
+                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-green-300 to-green-500 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-sm">
                       {index + 1}
                     </div>
                     <div className="flex-1">
@@ -170,7 +153,7 @@ const ChapterContent = ({ chapter, basicInfo }) => {
                           {topic.description}
                         </p>
                       </div>
-                      
+
                       {/* Code Example with IDE-style design */}
                       {topic.codeExample && (
                         <div className="mt-6">
@@ -199,7 +182,7 @@ const ChapterContent = ({ chapter, basicInfo }) => {
                           </div>
                         </div>
                       )}
-                      
+
                       {/* Key Points */}
                       {topic.keyPoints && Array.isArray(topic.keyPoints) && (
                         <div className="mt-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">

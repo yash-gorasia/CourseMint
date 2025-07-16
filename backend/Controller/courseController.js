@@ -1,13 +1,16 @@
 import CourseList from "../Model/courseListModel.js";
-import Chapters from "../Model/chapterModel.js"; 
-
+import Chapters from "../Model/chapterModel.js"; // Make sure this path is correct
+// Ensure that courseListModel.js exports a valid Mongoose model, e.g.:
+// import mongoose from "mongoose";
+// const courseListSchema = new mongoose.Schema({ ... });
+// export default mongoose.model("CourseList", courseListSchema);
 
 const createCourse = async (req, res) => {
     try {
-        const { name, category, level, courseOutput, userEmail  } = req.body;
+        const { name, category, level, courseOutput, userEmail } = req.body;
 
         // Validate required fields
-        if (!name || !category || !level || !courseOutput) {
+        if (!name || !category || !level || !courseOutput || !userEmail) {
             return res.status(400).json({
                 success: false,
                 message: 'All fields are required'
@@ -20,7 +23,7 @@ const createCourse = async (req, res) => {
             category,
             level,
             courseOutput,
-            userEmail
+            userEmail: userEmail || null // Default to null if not provided
         });
 
         // Save the course to the database
@@ -40,11 +43,12 @@ const createCourse = async (req, res) => {
         });
     }
 }
+
 const getCourse = async (req, res) => {
     try {
         const courseId = req.params.id;
 
-        // Find the course by ID and populate chapter data
+        // Find the course by ID
         const course = await CourseList.findById(courseId);
 
         if (!course) {
@@ -52,14 +56,6 @@ const getCourse = async (req, res) => {
                 success: false,
                 message: 'Course not found'
             });
-        }
-        
-        // Fetch chapters if course has chapterIds
-        if (course.chapterIds && course.chapterIds.length > 0) {
-            const chapters = await Chapters.find({ _id: { $in: course.chapterIds } });
-            
-            // Add chapters to the course response
-            course._doc.chapters = chapters;
         }
 
         res.status(200).json({
