@@ -10,8 +10,11 @@ import DashboardPage from './Pages/DashboardPage.jsx'
 import CreateCoursePage from './Pages/CreateCoursePage.jsx'
 import CoursePage from './Pages/CoursePage.jsx'
 import StartPage from './Pages/StartPage.jsx'
+import QuizPage from './Pages/QuizPage.jsx'
 import { Provider } from 'react-redux'
-import  store  from './redux/store'
+import store from './redux/store'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -33,7 +36,19 @@ createRoot(document.getElementById('root')).render(
             <Route path="/create-course" element={<CreateCoursePage />} />
             <Route path="/course/:courseId" element={<CoursePage />} />
             <Route path="/course/:courseId/start" element={<StartPage />} />
+            <Route path="/quiz/:quizId" element={<QuizPage />} />
           </Routes>
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
         </Router>
       </ClerkProvider>
     </Provider>

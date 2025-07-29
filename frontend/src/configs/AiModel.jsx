@@ -28,6 +28,9 @@ export const generate_AI = async (prompt, type = 'course') => {
       return DataValidator.normalizeCourse(data);
     } else if (type === 'chapter') {
       return DataValidator.normalizeContent(data);
+    } else if (type === 'quiz') {
+      // For quiz, return the raw parsed data so validateQuizContent can handle it
+      return data;
     }
     
     return data;

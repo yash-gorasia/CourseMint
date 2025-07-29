@@ -4,6 +4,7 @@ import connectDB from './Config/db.js';
 import dotenv from 'dotenv';
 import courseRoute from './Route/courseRoute.js';
 import chapterRoute from './Route/chapterRoute.js';
+import quizRoute from './Route/quizRoute.js';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 
 app.use('/api/course', courseRoute);
 app.use('/api/chapter', chapterRoute);
+app.use('/api/quiz', quizRoute);
 
 
 

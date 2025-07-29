@@ -172,6 +172,7 @@ const Page = () => {
             key={selectedChapterBasicInfo?.chapterName} // Force re-render when chapter name changes
             chapter={chapterContentData?.chapter}
             basicInfo={selectedChapterBasicInfo}
+            course={data?.course}
           />
         )}
       </div>
