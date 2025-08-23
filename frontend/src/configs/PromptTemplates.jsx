@@ -64,124 +64,169 @@ IMPORTANT: The chapters array must contain exactly ${chapters} chapters. Do not 
 
 // Generate chapter content for Health category
 export const createHealthChapterContentPrompt = (chapterName, topic, level, chapterDescription = '') => `
-Create comprehensive medical education content for the chapter "${chapterName}" about ${topic} for ${level} level medical students/professionals.
+Create detailed medical content for chapter "${chapterName}" about ${topic} for ${level} level.
 
 Chapter context: ${chapterDescription}
 
-Create detailed medical content with the following structure:
+Make the content very elaborate and comprehensive. Include extensive medical information.
 
 RESPOND WITH ONLY VALID JSON:
 [
   {
     "title": "Main Medical Topic",
-    "description": "Comprehensive medical explanation with pathophysiology, etiology, and clinical significance (200-800 words)",
-    "anatomyDescription": "Detailed anatomical structure description in text format",
-    "symptoms": ["symptom1", "symptom2", "symptom3", "symptom4"],
+    "description": "Very detailed medical explanation with pathophysiology, etiology, epidemiology, and clinical significance. Include mechanisms, risk factors, and detailed medical background. Make this 500-1000 words with comprehensive medical information.",
+    "anatomy": "Detailed anatomical description with structures, locations, and relationships. Include normal anatomy and any anatomical variations relevant to the condition.",
+    "symptoms": ["detailed symptom 1 with description", "detailed symptom 2 with description", "detailed symptom 3 with description", "detailed symptom 4 with description", "detailed symptom 5 with description"],
     "diagnosis": {
-      "differentialDiagnosis": ["condition1", "condition2", "condition3"],
-      "diagnosticTests": ["test1", "test2", "test3"],
-      "redFlags": ["warning sign1", "warning sign2", "warning sign3"]
+      "clinicalPresentation": "Detailed presentation patterns and typical patient profiles",
+      "differentialDiagnosis": ["condition 1 with brief description", "condition 2 with brief description", "condition 3 with brief description"],
+      "diagnosticTests": ["test 1 with indication", "test 2 with indication", "test 3 with indication"],
+      "redFlags": ["warning sign 1", "warning sign 2", "warning sign 3"]
     },
     "treatment": {
-      "primaryTreatment": "Main evidence-based treatment approach",
-      "alternatives": ["alternative1", "alternative2"],
-      "contraindications": ["contraindication1", "contraindication2"],
-      "sideEffects": ["side effect1", "side effect2"]
+      "primaryTreatment": "Comprehensive evidence-based treatment approach with dosages and protocols",
+      "alternatives": ["alternative 1 with indication", "alternative 2 with indication"],
+      "contraindications": ["contraindication 1", "contraindication 2"],
+      "sideEffects": ["side effect 1", "side effect 2", "side effect 3"],
+      "monitoring": "What to monitor during treatment"
     },
     "caseStudy": {
-      "patientPresentation": "Detailed patient scenario with age, gender, chief complaint, history of present illness, past medical history",
-      "clinicalFindings": "Physical examination findings and vital signs",
-      "investigationResults": "Laboratory results, imaging findings, and other diagnostic test results",
-      "diagnosis": "Final diagnosis with ICD code if applicable",
-      "treatmentPlan": "Step-by-step evidence-based treatment approach",
-      "outcome": "Patient outcome, follow-up plan, and prognosis"
+      "patientPresentation": "Very detailed patient scenario: age, gender, chief complaint, detailed history of present illness, past medical history, family history, social history",
+      "clinicalFindings": "Complete physical examination findings including vital signs, general appearance, and system-specific findings",
+      "investigationResults": "Detailed laboratory results, imaging findings, and other diagnostic test results with normal ranges",
+      "clinicalReasoning": "Step-by-step thought process leading to diagnosis",
+      "diagnosis": "Final diagnosis with ICD code and explanation",
+      "treatmentPlan": "Comprehensive step-by-step evidence-based treatment approach with rationale",
+      "outcome": "Patient outcome, follow-up plan, prognosis, and patient education"
     },
-    "clinicalPearls": ["evidence-based pearl1", "clinical tip2", "diagnostic pearl3"],
+    "complications": ["complication 1 with management", "complication 2 with management", "complication 3 with management"],
+    "prognosis": "Detailed prognosis information with factors affecting outcome",
+    "prevention": "Primary, secondary, and tertiary prevention strategies",
+    "clinicalPearls": ["evidence-based clinical pearl 1", "evidence-based clinical pearl 2", "evidence-based clinical pearl 3"],
     "mnemonics": {
-      "title": "Memory aid title",
+      "title": "Memory aid for key concepts",
       "mnemonic": "MNEMONIC",
-      "explanation": "What each letter stands for with clinical context"
+      "explanation": "What each letter stands for with detailed clinical context"
     },
     "subFeatures": [
       {
-        "title": "Sub-topic title (e.g., pathophysiology, complications)",
-        "description": "Detailed medical explanation (100-400 words)",
-        "clinicalSignificance": "Why this matters clinically and how it affects patient care",
-        "practicalTips": ["clinical tip1", "practical advice2"]
+        "title": "Pathophysiology",
+        "description": "Very detailed pathophysiological mechanisms (200-400 words)",
+        "clinicalSignificance": "How this pathophysiology affects patient care and treatment decisions",
+        "practicalTips": ["clinical tip 1", "practical advice 2"]
+      },
+      {
+        "title": "Epidemiology",
+        "description": "Detailed epidemiological data, prevalence, incidence, demographics (150-300 words)",
+        "clinicalSignificance": "Clinical relevance of epidemiological data",
+        "practicalTips": ["population health consideration 1", "screening recommendation 2"]
       }
     ]
   }
 ]
 
-Medical Content Requirements for ${level} level:
-${getHealthContentGuidelines(level)}
+Create very comprehensive medical content with extensive detail for medical education.
+`;
 
-IMPORTANT: 
-- Use evidence-based medical information
-- Include proper medical terminology and drug names
-- Focus on clinical decision-making and patient safety
-- Provide realistic case scenarios
-- Include differential diagnosis considerations
+// Generate chapter content for Programming category  
+export const createProgrammingChapterContentPrompt = (chapterName, topic, level, chapterDescription = '') => `
+Create programming content for chapter "${chapterName}" about ${topic} for ${level} level.
+
+Chapter context: ${chapterDescription}
+
+Include detailed code examples and explanations.
+
+RESPOND WITH ONLY VALID JSON:
+[
+  {
+    "title": "Main Programming Topic",
+    "description": "Detailed explanation of the programming concept (200-500 words)",
+    "codeExample": "// Detailed code example with comments\n// Show practical implementation\nfunction example() {\n  // code here\n}",
+    "subFeatures": [
+      {
+        "title": "Implementation Details",
+        "description": "How to implement this concept (100-300 words)",
+        "codeExample": "// Code snippet showing implementation\nconst example = () => {\n  // implementation code\n};"
+      },
+      {
+        "title": "Best Practices",
+        "description": "Best practices and common patterns (100-300 words)",
+        "codeExample": "// Example of best practices\n// Clean, readable code example"
+      },
+      {
+        "title": "Common Mistakes",
+        "description": "Common mistakes and how to avoid them (100-300 words)",
+        "codeExample": "// Example of what NOT to do\n// and the correct approach"
+      }
+    ]
+  },
+  {
+    "title": "Advanced Concepts",
+    "description": "More advanced programming topics (200-500 words)",
+    "codeExample": "// Advanced code example\n// Showing complex implementation",
+    "subFeatures": [
+      {
+        "title": "Performance Optimization",
+        "description": "How to optimize for better performance (100-300 words)",
+        "codeExample": "// Optimized code example\n// Performance improvements"
+      },
+      {
+        "title": "Real-world Application",
+        "description": "How this applies in real projects (100-300 words)",
+        "codeExample": "// Real-world usage example\n// Practical implementation"
+      }
+    ]
+  }
+]
+
+Focus on practical code examples and clear explanations for programming concepts.
 `;
 
 // Generate chapter content for non-Health categories
 export const createChapterContentPrompt = (chapterName, topic, level, chapterDescription = '') => `
-Create detailed content for the chapter "${chapterName}" about ${topic} for ${level} level students.
+Create content for chapter "${chapterName}" about ${topic} for ${level} level.
 
 Chapter context: ${chapterDescription}
 
-Include:
-- 4-6 main topics with descriptions  
-- Code examples where relevant (80% of topics should have code)
-- Sub-topics for complex concepts
-
-Respond with ONLY valid JSON:
+RESPOND WITH ONLY VALID JSON:
 [
   {
-    "title": "Topic title",
-    "description": "Detailed explanation (100-500 words)",
-    "codeExample": "practical code example or null",
+    "title": "Main Topic",
+    "description": "Detailed explanation of the topic (200-500 words)",
     "subFeatures": [
       {
-        "title": "Sub-topic title", 
-        "description": "Sub-topic explanation (50-200 words)",
-        "codeExample": "code snippet or null"
+        "title": "Subtopic 1",
+        "description": "Detailed explanation (100-300 words)"
+      },
+      {
+        "title": "Subtopic 2", 
+        "description": "Detailed explanation (100-300 words)"
+      },
+      {
+        "title": "Subtopic 3",
+        "description": "Detailed explanation (100-300 words)"
+      }
+    ]
+  },
+  {
+    "title": "Second Topic",
+    "description": "Detailed explanation (200-500 words)",
+    "subFeatures": [
+      {
+        "title": "Subtopic 1",
+        "description": "Detailed explanation (100-300 words)"
+      },
+      {
+        "title": "Subtopic 2",
+        "description": "Detailed explanation (100-300 words)"
       }
     ]
   }
 ]
 
-Guidelines for ${level} level:
-${getContentGuidelines(level)}
+Keep the content simple and focused on the main concepts.
 `;
 
-// Content guidelines helper
-const getContentGuidelines = (level) => {
-  switch (level.toLowerCase()) {
-    case 'beginner':
-      return '- Use simple, clear language\n- Explain fundamental concepts\n- Include step-by-step examples\n- Focus on practical applications';
-    case 'intermediate': 
-      return '- Assume basic knowledge\n- Introduce advanced concepts\n- Show real-world use cases\n- Include optimization tips';
-    case 'advanced':
-      return '- Use technical terminology\n- Cover complex scenarios\n- Include performance considerations\n- Show industry best practices';
-    default:
-      return '- Adapt content to audience level\n- Provide clear explanations\n- Include practical examples';
-  }
-};
-
-// Health content guidelines helper
-const getHealthContentGuidelines = (level) => {
-  switch (level.toLowerCase()) {
-    case 'beginner':
-      return '- Use clear medical terminology with explanations\n- Focus on basic anatomy and physiology\n- Include common conditions and treatments\n- Emphasize patient safety and basic clinical skills\n- Provide simple diagnostic approaches';
-    case 'intermediate': 
-      return '- Assume basic medical knowledge\n- Include complex pathophysiology\n- Focus on differential diagnosis\n- Include pharmacology and drug interactions\n- Cover clinical decision-making scenarios';
-    case 'advanced':
-      return '- Use advanced medical terminology\n- Cover rare conditions and complex cases\n- Include latest research and evidence\n- Focus on specialist-level decision making\n- Include cutting-edge treatments and procedures';
-    default:
-      return '- Adapt to medical education level\n- Provide evidence-based information\n- Include clinical reasoning\n- Focus on patient-centered care';
-  }
-};
 
 // Legacy support - these are the functions the pages expect
 export const GENERATE_COURSE_PROMPT = (category, topic, level, includeVideo, dynamicOptions = {}) => {
@@ -198,23 +243,27 @@ export const GENERATE_CHAPTER_CONTENT_PROMPT = (chapterName, chapterDescription,
   if (courseContext?.category?.toLowerCase() === 'health') {
     return createHealthChapterContentPrompt(chapterName, courseContext.topic || 'health', level, chapterDescription);
   }
+  // Use programming-specific prompt for Programming category
+  if (courseContext?.category?.toLowerCase() === 'programming') {
+    return createProgrammingChapterContentPrompt(chapterName, courseContext.topic || 'programming', level, chapterDescription);
+  }
   // Use general prompt for other categories
-  return createChapterContentPrompt(chapterName, courseContext.topic || 'programming', level, chapterDescription);
+  return createChapterContentPrompt(chapterName, courseContext.topic || 'general', level, chapterDescription);
 };
 
 // Generate quiz prompts
 export const createHealthQuizPrompt = (courseName, chapters, level) => `
 Create a comprehensive medical quiz for the course "${courseName}" at ${level} level.
 
-STRICT REQUIREMENTS:
-- Generate exactly 10 multiple-choice questions
+CRITICAL REQUIREMENTS - MUST FOLLOW EXACTLY:
+- Generate EXACTLY 30 multiple-choice questions (not 29, not 31, exactly 30)
 - Include questions from all chapters: ${chapters.map(ch => ch.chapterName || ch.chapter_name).join(', ')}
-- Focus on clinical scenarios and diagnostic reasoning
 - Each question must have exactly 4 options
+- Set correctAnswer as number (0, 1, 2, or 3)
 - Include detailed explanations for correct answers
-- Respond with ONLY valid JSON
+- Respond with ONLY valid JSON (no extra text)
 
-JSON format:
+Required JSON format - EXACTLY 30 questions:
 {
   "title": "${courseName} - Medical Assessment Quiz",
   "description": "Comprehensive medical quiz covering key concepts from ${courseName}",
@@ -230,6 +279,8 @@ JSON format:
   ]
 }
 
+IMPORTANT: The questions array must contain exactly 30 question objects. Do not generate fewer than 30 questions.
+
 MEDICAL QUIZ GUIDELINES:
 - Include case-based scenarios and clinical vignettes
 - Test understanding of pathophysiology and clinical decision-making
@@ -241,14 +292,15 @@ MEDICAL QUIZ GUIDELINES:
 export const createGeneralQuizPrompt = (courseName, chapters, level, category) => `
 Create a comprehensive quiz for the course "${courseName}" in ${category} category at ${level} level.
 
-STRICT REQUIREMENTS:
-- Generate exactly 10 multiple-choice questions
+CRITICAL REQUIREMENTS - MUST FOLLOW EXACTLY:
+- Generate EXACTLY 30 multiple-choice questions (not 29, not 31, exactly 30)
 - Include questions from all chapters: ${chapters.map(ch => ch.chapterName || ch.chapter_name).join(', ')}
 - Each question must have exactly 4 options
+- Set correctAnswer as number (0, 1, 2, or 3)
 - Include detailed explanations for correct answers
-- Respond with ONLY valid JSON
+- Respond with ONLY valid JSON (no extra text)
 
-JSON format:
+Required JSON format - EXACTLY 30 questions:
 {
   "title": "${courseName} - Knowledge Assessment Quiz",
   "description": "Comprehensive quiz covering key concepts from ${courseName}",
@@ -264,6 +316,8 @@ JSON format:
   ]
 }
 
+IMPORTANT: The questions array must contain exactly 30 question objects. Do not generate fewer than 30 questions.
+
 QUIZ GUIDELINES:
 - Test conceptual understanding and practical application
 - Include both theoretical and practical questions
@@ -278,4 +332,114 @@ export const GENERATE_QUIZ_PROMPT = (courseName, chapters, courseContext, level)
   }
   // Use general prompt for other categories
   return createGeneralQuizPrompt(courseName, chapters, level, courseContext?.category || 'General');
+};
+
+// Generate flashcard prompts
+export const createHealthFlashcardPrompt = (courseName, chapters, level) => `
+Create medical flashcards for the course "${courseName}" at ${level} level.
+
+CRITICAL REQUIREMENTS - MUST FOLLOW EXACTLY:
+- Generate EXACTLY 30 flashcards (not 29, not 31, exactly 30)
+- Cover content from all chapters: ${chapters.map(ch => ch.chapterName || ch.chapter_name).join(', ')}
+- Focus on key medical concepts, definitions, and clinical knowledge
+- Each flashcard needs front and back content
+- Respond with ONLY valid JSON (no extra text)
+
+Required JSON format - EXACTLY 30 flashcards:
+{
+  "title": "${courseName} - Medical Flashcards",
+  "description": "Essential medical flashcards covering key concepts from ${courseName}",
+  "flashcards": [
+    {
+      "front": "Clear, concise question or term (medical terminology, disease name, etc.)",
+      "back": "Comprehensive answer with clinical details and key facts",
+      "difficulty": "easy",
+      "category": "anatomy",
+      "tags": ["tag1", "tag2"],
+      "chapter": "Chapter name this flashcard relates to"
+    }
+  ]
+}
+
+IMPORTANT: The flashcards array must contain exactly 30 flashcard objects.
+
+MEDICAL FLASHCARD CATEGORIES: anatomy, pathophysiology, pharmacology, diagnosis, treatment, symptoms
+DIFFICULTY LEVELS: easy, medium, hard
+`;
+
+export const createProgrammingFlashcardPrompt = (courseName, chapters, level) => `
+Create programming flashcards for the course "${courseName}" at ${level} level.
+
+CRITICAL REQUIREMENTS - MUST FOLLOW EXACTLY:
+- Generate EXACTLY 30 flashcards (not 29, not 31, exactly 30)
+- Cover content from all chapters: ${chapters.map(ch => ch.chapterName || ch.chapter_name).join(', ')}
+- Focus on syntax, concepts, algorithms, and best practices
+- Each flashcard needs front and back content
+- Respond with ONLY valid JSON (no extra text)
+
+Required JSON format - EXACTLY 30 flashcards:
+{
+  "title": "${courseName} - Programming Flashcards",
+  "description": "Essential programming flashcards covering key concepts from ${courseName}",
+  "flashcards": [
+    {
+      "front": "Programming question, syntax, or concept",
+      "back": "Detailed explanation with code examples and best practices",
+      "difficulty": "medium",
+      "category": "syntax",
+      "tags": ["javascript", "functions"],
+      "chapter": "Chapter name this flashcard relates to"
+    }
+  ]
+}
+
+IMPORTANT: The flashcards array must contain exactly 30 flashcard objects.
+
+PROGRAMMING CATEGORIES: syntax, algorithms, datastructures, concepts, bestpractices, debugging
+DIFFICULTY LEVELS: easy, medium, hard
+`;
+
+export const createGeneralFlashcardPrompt = (courseName, chapters, level, category) => `
+Create flashcards for the course "${courseName}" in ${category} category at ${level} level.
+
+CRITICAL REQUIREMENTS - MUST FOLLOW EXACTLY:
+- Generate EXACTLY 30 flashcards (not 29, not 31, exactly 30)
+- Cover content from all chapters: ${chapters.map(ch => ch.chapterName || ch.chapter_name).join(', ')}
+- Focus on key concepts, definitions, and important facts
+- Each flashcard needs front and back content
+- Respond with ONLY valid JSON (no extra text)
+
+Required JSON format - EXACTLY 30 flashcards:
+{
+  "title": "${courseName} - Study Flashcards",
+  "description": "Essential flashcards covering key concepts from ${courseName}",
+  "flashcards": [
+    {
+      "front": "Clear, concise question or term",
+      "back": "Comprehensive answer with detailed explanation",
+      "difficulty": "medium",
+      "category": "concepts",
+      "tags": ["tag1", "tag2"],
+      "chapter": "Chapter name this flashcard relates to"
+    }
+  ]
+}
+
+IMPORTANT: The flashcards array must contain exactly 30 flashcard objects.
+
+GENERAL CATEGORIES: concepts, definitions, facts, applications, theory, practice
+DIFFICULTY LEVELS: easy, medium, hard
+`;
+
+export const GENERATE_FLASHCARD_PROMPT = (courseName, chapters, courseContext, level) => {
+  // Use health-specific prompt for Health category
+  if (courseContext?.category?.toLowerCase() === 'health') {
+    return createHealthFlashcardPrompt(courseName, chapters, level);
+  }
+  // Use programming-specific prompt for Programming category
+  if (courseContext?.category?.toLowerCase() === 'programming') {
+    return createProgrammingFlashcardPrompt(courseName, chapters, level);
+  }
+  // Use general prompt for other categories
+  return createGeneralFlashcardPrompt(courseName, chapters, level, courseContext?.category || 'General');
 };

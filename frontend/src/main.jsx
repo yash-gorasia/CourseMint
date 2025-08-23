@@ -11,6 +11,7 @@ import CreateCoursePage from './Pages/CreateCoursePage.jsx'
 import CoursePage from './Pages/CoursePage.jsx'
 import StartPage from './Pages/StartPage.jsx'
 import QuizPage from './Pages/QuizPage.jsx'
+import FlashcardPage from './Pages/FlashcardPage.jsx'
 import { Provider } from 'react-redux'
 import store from './redux/store'
 import { ToastContainer } from 'react-toastify'
@@ -37,6 +38,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="/course/:courseId" element={<CoursePage />} />
             <Route path="/course/:courseId/start" element={<StartPage />} />
             <Route path="/quiz/:quizId" element={<QuizPage />} />
+            <Route path="/flashcards/:courseId" element={<FlashcardPage />} />
           </Routes>
           <ToastContainer
             position="top-right"

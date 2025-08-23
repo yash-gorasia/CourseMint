@@ -5,17 +5,19 @@ import { useGetCourseQuery } from '../redux/api/courseSlice.js'
 import BasicInfo from '../Components/CourseLayout/BasicInfo'
 import ChapterList from '../Components/CourseLayout/ChapterList.jsx'
 import { generate_AI } from '../configs/AiModel'
-import { GENERATE_CHAPTER_CONTENT_PROMPT, GENERATE_QUIZ_PROMPT } from '../configs/PromptTemplates.jsx'
+import { GENERATE_CHAPTER_CONTENT_PROMPT, GENERATE_QUIZ_PROMPT, GENERATE_FLASHCARD_PROMPT } from '../configs/PromptTemplates.jsx'
 import { DataValidator, validateQuizContent } from '../utils/DataValidator.js'
 import Loader from '../utils/Loader'
 import getVideos from '../configs/Service.jsx'
 import { useAddChapterMutation } from '../redux/api/chapterSlice.js'
 import { useCreateQuizMutation, useGetQuizzesByCourseQuery } from '../redux/api/quizSlice.js'
+import { useCreateFlashcardSetMutation, useGetFlashcardSetsByCourseQuery } from '../redux/api/flashcardSlice.js'
 import { toast } from 'react-toastify'
 
 const CoursePage = () => {
   const [loader, setLoader] = useState(false);
   const [quizLoader, setQuizLoader] = useState(false);
+  const [flashcardLoader, setFlashcardLoader] = useState(false);
   const [showQuizList, setShowQuizList] = useState(false);
   const { courseId } = useParams()
   const navigate = useNavigate()
@@ -23,7 +25,9 @@ const CoursePage = () => {
   const course = res?.course;
   const [addChapter] = useAddChapterMutation();
   const [createQuiz] = useCreateQuizMutation();
+  const [createFlashcardSet] = useCreateFlashcardSetMutation();
   const { data: quizzesData } = useGetQuizzesByCourseQuery(courseId);
+  const { data: flashcardData } = useGetFlashcardSetsByCourseQuery(courseId);
 
   const generateQuiz = async () => {
     // Check if quiz already exists
@@ -149,7 +153,7 @@ const CoursePage = () => {
         console.log(`Generated prompt for ${chapterName} (${courseLevel} level, Category: ${courseCategory}):`, prompt);
 
         // Generate AI content with validation
-        const aiResponse = await generate_AI(prompt, 'chapter');
+        const aiResponse = await generate_AI(prompt, 'chapter', courseCategory.toLowerCase());
         console.log(`AI Response for ${chapterName}:`, aiResponse);
 
         // Validate the AI response
@@ -198,6 +202,92 @@ const CoursePage = () => {
     }
   };
 
+  const generateFlashcards = async () => {
+    // Check if flashcards already exist
+    if (flashcardData?.flashcardSets?.length > 0) {
+      toast.info('Flashcards already exist for this course. Click "Study Flashcards" to start.');
+      navigate(`/flashcards/${courseId}`);
+      return;
+    }
+
+    setFlashcardLoader(true);
+    try {
+      const chapters = course?.courseOutput?.chapters || [];
+      const courseName = course?.courseOutput?.courseName || course?.courseOutput?.course_name || 'Course';
+      const courseCategory = course?.category || 'General';
+      const courseLevel = course?.level || 'intermediate';
+
+      if (chapters.length === 0) {
+        toast.error('No chapters found to generate flashcards from');
+        setFlashcardLoader(false);
+        return;
+      }
+
+      console.log(`Generating flashcards for course: ${courseName} (${courseCategory}, ${courseLevel})`);
+
+      // Create prompt for AI
+      const prompt = GENERATE_FLASHCARD_PROMPT(
+        courseName,
+        chapters,
+        { category: courseCategory },
+        courseLevel
+      );
+
+      console.log('Flashcard generation prompt:', prompt);
+
+      // Generate flashcards with AI
+      const result = await generate_AI(prompt, 'flashcard');
+      console.log('AI Response for flashcards:', result);
+
+      // Validate and clean the response
+      const validator = new DataValidator(result);
+      const validation = validator.validateFlashcardContent();
+
+      if (!validation.isValid) {
+        console.error('Flashcard validation failed:', validation.errors);
+        toast.error(`Failed to generate valid flashcards: ${validation.errors.join(', ')}`);
+        setFlashcardLoader(false);
+        return;
+      }
+
+      // Show warning if not exactly 30 flashcards
+      const flashcardCount = validation.normalized.flashcards.length;
+      if (flashcardCount < 30) {
+        console.warn(`Generated ${flashcardCount} flashcards instead of 30`);
+        toast.warning(`Generated ${flashcardCount} flashcards (expected 30). Still creating flashcard set...`);
+      } else {
+        console.log(`Successfully generated ${flashcardCount} flashcards`);
+      }
+
+      // Create flashcard set data
+      const flashcardSetData = {
+        courseId: courseId,
+        title: validation.normalized.title,
+        description: validation.normalized.description,
+        flashcards: validation.normalized.flashcards,
+        category: courseCategory,
+        level: courseLevel
+      };
+
+      console.log(`Creating flashcard set with data:`, flashcardSetData);
+      const flashcardResult = await createFlashcardSet(flashcardSetData).unwrap();
+      console.log(`Flashcards created successfully:`, flashcardResult);
+
+      toast.success(`${flashcardCount} flashcards generated successfully!`);
+      
+      // Navigate to flashcard page with a small delay to ensure data is saved
+      setTimeout(() => {
+        navigate(`/flashcards/${courseId}`);
+      }, 500);
+
+    } catch (error) {
+      console.error('Error generating flashcards:', error);
+      toast.error('Failed to generate flashcards');
+    } finally {
+      setFlashcardLoader(false);
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -209,7 +299,7 @@ const CoursePage = () => {
         <BasicInfo course={course} />
 
         {/* Feature Cards */}
-        <div className='my-8 grid grid-cols-1 md:grid-cols-3 gap-6'>
+        <div className='my-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6'>
           {/* Quiz Card */}
           <div 
             className='bg-green-50 border-2 border-green-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer'
@@ -276,23 +366,72 @@ const CoursePage = () => {
           </div>
 
           {/* Flashcards Card */}
-          <div className='bg-green-50 border-2 border-green-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer'>
+          <div 
+            className='bg-green-50 border-2 border-purple-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer'
+            onClick={flashcardData?.flashcardSets?.length > 0 ? () => navigate(`/flashcards/${courseId}`) : generateFlashcards}
+          >
             <div className='flex items-center justify-center mb-4'>
               <div className='bg-green-500 text-white rounded-full p-3'>
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
+                {flashcardLoader ? (
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                ) : (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                )}
               </div>
             </div>
-            <h3 className='text-lg font-semibold text-center text-green-800 mb-2'>Flashcards</h3>
-            <p className='text-sm text-gray-600 text-center'>Study key concepts with digital flashcards for better retention</p>
-            <div className='mt-4 text-center'>
-              <span className='text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full'>Coming Soon</span>
-            </div>
+            <h3 className='text-lg font-semibold text-center text-green-800 mb-2'>
+              {flashcardLoader 
+                ? 'Generating Flashcards...' 
+                : flashcardData?.flashcardSets?.length > 0 
+                  ? 'Study Flashcards' 
+                  : 'Generate Flashcards'
+              }
+            </h3>
+            <p className='text-sm text-gray-600 text-center'>
+              {flashcardLoader 
+                ? 'Creating interactive flashcards from course content...' 
+                : flashcardData?.flashcardSets?.length > 0
+                  ? 'Click to start studying with flashcards'
+                  : 'Generate flashcards for better retention and quick review'
+              }
+            </p>
+            {flashcardData?.flashcardSets?.length > 0 ? (
+              <div className='mt-4 space-y-2'>
+                <div className='text-center'>
+                  <span className='text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full'>
+                    {flashcardData.flashcardSets[0].totalCards || 0} Flashcards Available
+                  </span>
+                </div>
+                <div className='flex gap-2 justify-center'>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/flashcards/${courseId}`);
+                    }}
+                    className='text-xs bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600'
+                  >
+                    Start Studying
+                  </button>
+                </div>
+                <div className='text-center'>
+                  <span className='text-xs text-gray-500'>
+                    Created on {new Date(flashcardData.flashcardSets[0].createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className='mt-4 text-center'>
+                <span className='text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full'>
+                  Click to create flashcards for this course
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Q&A Card */}
-          <div className='bg-green-50 border-2 border-green-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer'>
+          {/* <div className='bg-green-50 border-2 border-green-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer'>
             <div className='flex items-center justify-center mb-4'>
               <div className='bg-green-500 text-white rounded-full p-3'>
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -305,7 +444,7 @@ const CoursePage = () => {
             <div className='mt-4 text-center'>
               <span className='text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full'>Coming Soon</span>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* List of Chapteres */}

@@ -308,21 +308,21 @@ const QuizPage = () => {
 
                     {/* Navigation */}
                     <div className="bg-white rounded-lg shadow-lg p-6">
-                        <div className="flex justify-between items-center mb-6">
+                        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                             <button
                                 onClick={prevQuestion}
                                 disabled={currentQuestion === 0}
-                                className="bg-gray-500 text-white px-6 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600"
+                                className="bg-gray-500 text-white px-6 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 w-full sm:w-auto"
                             >
                                 Previous
                             </button>
 
-                            <div className="flex space-x-2">
+                            <div className="flex flex-wrap justify-center gap-2 max-w-full overflow-x-auto px-2">
                                 {quiz.questions.map((_, index) => (
                                     <button
                                         key={index}
                                         onClick={() => goToQuestion(index)}
-                                        className={`w-10 h-10 rounded-full font-semibold
+                                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full font-semibold text-sm flex-shrink-0
                       ${currentQuestion === index
                                                 ? 'bg-green-600 text-white'
                                                 : selectedAnswers[index] !== undefined
@@ -338,14 +338,14 @@ const QuizPage = () => {
                             {currentQuestion === quiz.questions.length - 1 ? (
                                 <button
                                     onClick={handleSubmitQuiz}
-                                    className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600"
+                                    className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 w-full sm:w-auto"
                                 >
                                     Submit Quiz
                                 </button>
                             ) : (
                                 <button
                                     onClick={nextQuestion}
-                                    className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
+                                    className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 w-full sm:w-auto"
                                 >
                                     Next
                                 </button>
