@@ -7,6 +7,7 @@ import { ClerkProvider } from '@clerk/clerk-react'
 import SignUpPage from './Pages/SignUpPage.jsx'
 import SignInPage from './Pages/SignInPage.jsx'
 import DashboardPage from './Pages/DashboardPage.jsx'
+import ExplorePage from './Pages/ExplorePage.jsx'
 import CreateCoursePage from './Pages/CreateCoursePage.jsx'
 import CoursePage from './Pages/CoursePage.jsx'
 import StartPage from './Pages/StartPage.jsx'
@@ -34,6 +35,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="/sign-up" element={<SignUpPage />} />
             <Route path="/sign-in" element={<SignInPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/dashboard/explore" element={<ExplorePage />} />
             <Route path="/create-course" element={<CreateCoursePage />} />
             <Route path="/course/:courseId" element={<CoursePage />} />
             <Route path="/course/:courseId/start" element={<StartPage />} />

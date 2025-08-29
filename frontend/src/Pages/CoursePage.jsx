@@ -9,10 +9,11 @@ import { GENERATE_CHAPTER_CONTENT_PROMPT, GENERATE_QUIZ_PROMPT, GENERATE_FLASHCA
 import { DataValidator, validateQuizContent } from '../utils/DataValidator.js'
 import Loader from '../utils/Loader'
 import getVideos from '../configs/Service.jsx'
-import { useAddChapterMutation } from '../redux/api/chapterSlice.js'
+import { useAddChapterMutation, useGetChaptersByCourseIdQuery } from '../redux/api/chapterSlice.js'
 import { useCreateQuizMutation, useGetQuizzesByCourseQuery } from '../redux/api/quizSlice.js'
 import { useCreateFlashcardSetMutation, useGetFlashcardSetsByCourseQuery } from '../redux/api/flashcardSlice.js'
 import { toast } from 'react-toastify'
+import ExportComponent from '../Components/Export/ExportComponent'
 
 const CoursePage = () => {
   const [loader, setLoader] = useState(false);
@@ -28,6 +29,7 @@ const CoursePage = () => {
   const [createFlashcardSet] = useCreateFlashcardSetMutation();
   const { data: quizzesData } = useGetQuizzesByCourseQuery(courseId);
   const { data: flashcardData } = useGetFlashcardSetsByCourseQuery(courseId);
+  const { data: chaptersData } = useGetChaptersByCourseIdQuery(courseId);
 
   const generateQuiz = async () => {
     // Check if quiz already exists
@@ -298,6 +300,35 @@ const CoursePage = () => {
         {/* Basic Info */}
         <BasicInfo course={course} />
 
+        {/* Share Course Link */}
+        <div className="my-6 flex flex-col items-center">
+          <span className="font-semibold text-gray-700 mb-2">Share this course:</span>
+          <div className="flex items-center gap-2 p-4 sm:p-6 md:p-10 border rounded-xl shadow-sm mt-5 bg-white max-w-full md:max-w-3xl mx-auto">
+            <input
+              type="text"
+              value={`http://localhost:5174/course/${courseId}`}
+              readOnly
+              className="border rounded px-2 py-1 w-84 text-gray-600 bg-gray-50"
+              onClick={e => e.target.select()}
+            />
+            <button
+              className="bg-green-500 text-white px-3 py-1 rounded green:bg-green-600 hover:cursor-pointer"
+              onClick={() => {
+                navigator.clipboard.writeText(`http://localhost:5174/course/${courseId}`);
+                toast.success('Course link copied!');
+              }}
+            >
+              Copy Link
+            </button>
+          </div>
+        </div>
+
+        {/* Export Component */}
+        <ExportComponent 
+          course={course}
+          chapters={chaptersData?.chapters}
+        />
+
         {/* Feature Cards */}
         <div className='my-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6'>
           {/* Quiz Card */}
@@ -367,7 +398,7 @@ const CoursePage = () => {
 
           {/* Flashcards Card */}
           <div 
-            className='bg-green-50 border-2 border-purple-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer'
+            className='bg-green-50 border-2 border-green-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer'
             onClick={flashcardData?.flashcardSets?.length > 0 ? () => navigate(`/flashcards/${courseId}`) : generateFlashcards}
           >
             <div className='flex items-center justify-center mb-4'>
@@ -400,7 +431,7 @@ const CoursePage = () => {
             {flashcardData?.flashcardSets?.length > 0 ? (
               <div className='mt-4 space-y-2'>
                 <div className='text-center'>
-                  <span className='text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full'>
+                  <span className='text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full'>
                     {flashcardData.flashcardSets[0].totalCards || 0} Flashcards Available
                   </span>
                 </div>
@@ -410,7 +441,7 @@ const CoursePage = () => {
                       e.stopPropagation();
                       navigate(`/flashcards/${courseId}`);
                     }}
-                    className='text-xs bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600'
+                    className='text-xs bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600'
                   >
                     Start Studying
                   </button>

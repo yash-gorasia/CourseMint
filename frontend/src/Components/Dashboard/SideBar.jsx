@@ -19,12 +19,6 @@ const SideBar = () => {
       icon: <HiOutlineSquare3Stack3D className='text-2xl' />,
       path: "/dashboard/explore"
     },
-    {
-      id: 3,
-      name: "LogOut",
-      icon: <HiOutlinePower className='text-2xl' />,
-      path: "/dashboard/logout"
-    }
   ]
 
   return (
